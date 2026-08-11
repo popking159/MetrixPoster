@@ -12,7 +12,7 @@ REPO="MetrixPoster"
 # 1. PYTHON DEPENDENCIES (Write only the core module names without prefixes)
 # The script automatically adds 'python-' for Py2 or 'python3-' for Py3.
 # Leave empty "" if the plugin doesn't need any Python dependencies.
-PY_DEPENDS="requests core compression difflib json"
+PY_DEPENDS="requests core json"
 
 # 2. SYSTEM DEPENDENCIES (Binary utilities installed exactly as written, e.g., unrar)
 # Leave empty "" if none are needed.
@@ -146,21 +146,6 @@ else
     log "[INFO] No dependencies specified in configuration. Skipping dependency phase."
 fi
 
-# 5. Backup MVI Directories
-log "[INFO] Backing up existing MVI directories..."
-rm -rf "$BACKUP_DIR"
-mkdir -p "$BACKUP_DIR"
-
-if [ -d "$PLUGIN_DIR/backdrops_mvi" ]; then
-    cp -r "$PLUGIN_DIR/backdrops_mvi" "$BACKUP_DIR/"
-    log "[OK] Backdrops backed up."
-fi
-
-if [ -d "$PLUGIN_DIR/bootlogos_mvi" ]; then
-    cp -r "$PLUGIN_DIR/bootlogos_mvi" "$BACKUP_DIR/"
-    log "[OK] Bootlogos backed up."
-fi
-
 # 6. Download Plugin Archive
 log "[INFO] Downloading main plugin tree archive..."
 rm -f "$TMP_FILE"
@@ -179,21 +164,6 @@ if [ $? -ne 0 ]; then
     log "[ERROR] Extraction failed!"
     rm -f "$TMP_FILE"
     exit 1
-fi
-
-# 8. Restore MVI Directories
-log "[INFO] Restoring MVI directories..."
-if [ -d "$BACKUP_DIR/backdrops_mvi" ]; then
-    # Ensure target directory exists in case the tar extraction completely removed it
-    mkdir -p "$PLUGIN_DIR/backdrops_mvi"
-    cp -rf "$BACKUP_DIR/backdrops_mvi/"* "$PLUGIN_DIR/backdrops_mvi/" 2>/dev/null
-    log "[OK] Backdrops restored."
-fi
-
-if [ -d "$BACKUP_DIR/bootlogos_mvi" ]; then
-    mkdir -p "$PLUGIN_DIR/bootlogos_mvi"
-    cp -rf "$BACKUP_DIR/bootlogos_mvi/"* "$PLUGIN_DIR/bootlogos_mvi/" 2>/dev/null
-    log "[OK] Bootlogos restored."
 fi
 
 # Cleanup
